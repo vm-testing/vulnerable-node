@@ -1,3 +1,24 @@
+------------------
+COURSE PROJECT 
+------------------
+
+# Project Objective
+Working in pairs (engineering squads), you will assume the role of Staff Software Engineers hired to take over a "distressed" legacy application. Your mission is not merely to write code, but to stabilize, secure, and modernize the system using advanced engineering practices. You must collaborate to apply AI for reverse engineering, implement governance metrics, secure the supply chain, and optimize for cloud economics, documenting your strategic decisions along the way.
+
+# Delivery 1: Discovery & Reverse Engineering
+
+Mini-Rubric:
+[☑️] Context Map accurately reflects the codebase structure.
+https://www.notion.so/Context-Map-AI-Driven-Discovery-vulnerable-node-302d301c9b7d81af8f87fccbdbb2ca65
+
+[☑️] User Stories are traceable to specific modules/files.
+
+[☑️] Onboarding log clearly identifies friction points.
+https://www.notion.so/DevEx-Audit-Onboarding-Log-NextCode-302d301c9b7d814a8b23f48ea52fd5ee
+
+
+
+===============
 Vulnerable Node
 ===============
 
