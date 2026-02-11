@@ -3,6 +3,9 @@
 # Project Objective
 Working in pairs (engineering squads), you will assume the role of Staff Software Engineers hired to take over a "distressed" legacy application. Your mission is not merely to write code, but to stabilize, secure, and modernize the system using advanced engineering practices. You must collaborate to apply AI for reverse engineering, implement governance metrics, secure the supply chain, and optimize for cloud economics, documenting your strategic decisions along the way.
 
+# Why we chose this project
+Hemos elegido The Vulnerable API porque, como expertos en Infraestructura, Cloud y DevOps, nos motivan los sistemas que presentan retos técnicos desde el inicio. Al detectar que el proyecto tenía problemas para arrancar, lo vimos como la oportunidad perfecta para aplicar nuestra experiencia estabilizando entornos. Nuestro objetivo es transformar este sistema inestable en una API sólida, segura y eficiente, aplicando prácticas modernas de automatización y optimización.
+
 # Delivery 1: Discovery & Reverse Engineering
 
 Mini-Rubric:
