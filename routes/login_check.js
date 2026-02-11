@@ -1,10 +1,8 @@
-
-function check_logged(req, res) {
-
-    if (req.session.logged == undefined || req.session.logged == false)
-    {
-        res.redirect("/login?returnurl=" + req.url);
+function check_logged(req, res, next) {
+    if (req.session.logged === undefined || req.session.logged === false) {
+        return res.redirect("/login?returnurl=" + encodeURIComponent(req.url));
     }
+    next();
 }
 
-module.exports = check_logged;
+export default check_logged;
