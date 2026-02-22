@@ -8,7 +8,7 @@
 
 ## Summary
 
-Full rehabilitation of the vulnerable-node project from an intentionally vulnerable state to a production-ready secure application. The project was originally designed as a deliberately insecure Node.js/Express application with multiple OWASP Top 10 vulnerabilities. Through 12 systematic fixes, all critical vulnerability classes have been eliminated while maintaining full application functionality.
+Full rehabilitation of the vulnerable-node project from an intentionally vulnerable state to a production-ready secure application. The project was originally designed as a deliberately insecure Node.js/Express application with multiple OWASP Top 10 vulnerabilities. Through 14 systematic fixes, all critical vulnerability classes have been eliminated while maintaining full application functionality.
 
 ---
 
@@ -28,6 +28,8 @@ Full rehabilitation of the vulnerable-node project from an intentionally vulnera
 | #010 | Input Validation con Zod | 🟠 ALTA | A03 - Injection | ✅ RESUELTO |
 | #011 | Rate Limiting | 🟡 MEDIA | A04 - Insecure Design | ✅ RESUELTO |
 | #012 | Infrastructure Modernization | 🟠 ALTA | A06 - Vulnerable Components | ✅ RESUELTO |
+| #013 | Redirect Loop por Orden de Routers | 🔴 CRITICA | Configuration / Routing | ✅ RESUELTO |
+| #014 | Columna Password Incompatible con Argon2 | 🔴 CRITICA | Configuration / Database Schema | ✅ RESUELTO |
 
 ---
 
@@ -92,6 +94,17 @@ Full rehabilitation of the vulnerable-node project from an intentionally vulnera
 - Multi-stage Docker build with non-root user (nodeuser:1001)
 - ESM migration, health checks, dotenv configuration, request ID tracking
 
+**Fix #013 - Redirect Loop por Orden de Routers** ([013-redirect-loop-route-order.md](013-redirect-loop-route-order.md))
+- Reordered router mounting in `app.js`: login router before products router
+- Products router's `check_logged` middleware was intercepting `/login` causing infinite redirect
+- Root cause: `router.use(check_logged)` on products router matched all paths including `/login`
+
+**Fix #014 - Columna Password Incompatible con Argon2** ([014-password-column-size-argon2.md](014-password-column-size-argon2.md))
+- Docker PostgreSQL had pre-existing table with `VARCHAR(50)` for password column
+- Argon2id hashes require ~97 characters; `CREATE TABLE IF NOT EXISTS` did not alter existing schema
+- Fixed by `ALTER TABLE users ALTER COLUMN password TYPE VARCHAR(255)` and re-hashing passwords
+- Silent `.catch(() => {})` in `init_db.js` masked the insertion error
+
 ---
 
 ## Overall Security Metrics
@@ -113,7 +126,7 @@ Full rehabilitation of the vulnerable-node project from an intentionally vulnera
 
 ### Project Statistics
 ```
-Total fixes implemented: 12
+Total fixes implemented: 14
 Files changed: 46+
 New files created: 15+
 Dependencies updated: 4
@@ -211,6 +224,8 @@ docker-compose up -d --build
 | [`010-input-validation-zod.md`](010-input-validation-zod.md) | Zod schema validation implementation | ✅ |
 | [`011-rate-limiting.md`](011-rate-limiting.md) | Rate limiting with express-rate-limit | ✅ |
 | [`012-infrastructure-modernization.md`](012-infrastructure-modernization.md) | Infrastructure modernization (dependencies, Docker, ESM, logging) | ✅ |
+| [`013-redirect-loop-route-order.md`](013-redirect-loop-route-order.md) | Redirect loop fix due to router mounting order | ✅ |
+| [`014-password-column-size-argon2.md`](014-password-column-size-argon2.md) | Password column VARCHAR(50) incompatible with argon2 hashes | ✅ |
 | [`IMPLEMENTATION_LOG.md`](IMPLEMENTATION_LOG.md) | This file - comprehensive rehabilitation summary | ✅ |
 
 ---
@@ -281,14 +296,15 @@ docker-compose up -d --build
 | 2026-02-10 | 1.0 | Initial SQL injection fix (Fix #001) | Staff Engineer |
 | 2026-02-10 | 1.1 | Database initialization fix (Fix #002) | Staff Engineer |
 | 2026-02-11 | 2.0 | Complete rehabilitation (Fixes #001-#012) | Staff Engineer + Claude Opus 4.6 |
+| 2026-02-11 | 2.1 | Runtime fixes: redirect loop and password column (Fixes #013-#014) | Staff Engineer + Claude Opus 4.6 |
 
 ---
 
 ## Sign-off
 
-- [x] All 12 security fixes implemented
+- [x] All 14 security fixes implemented
 - [x] Unit tests created and passing (12 tests)
-- [x] Documentation complete (5 detailed fix docs + implementation log)
+- [x] Documentation complete (7 detailed fix docs + implementation log)
 - [x] Docker build successful with health checks
 - [ ] Code review by second engineer
 - [ ] Security team sign-off

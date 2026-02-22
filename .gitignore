@@ -37,3 +37,8 @@ lib-cov
 jspm_packages
 .npm
 .node_repl_history
+
+# Claude / MCP / GitHub config
+.claude/
+.github/
+.playwright-mcp/

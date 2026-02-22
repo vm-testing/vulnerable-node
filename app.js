@@ -81,9 +81,9 @@ app.use(apiLimiter);
 // Health check (no auth required)
 app.use('', health);
 
-// Routes
-app.use('', products);
+// Routes (login must be before products to avoid redirect loop from auth middleware)
 app.use('', login);
+app.use('', products);
 
 // CSRF error handler
 app.use(function(err, req, res, next) {
