@@ -3,6 +3,10 @@
 A Node.js e-commerce application that was intentionally vulnerable, now rehabilitated to production-ready secure state.
 
 ## Tech Stack
+# Why we chose this project
+Hemos elegido The Vulnerable API porque, como expertos en Infraestructura, Cloud y DevOps, nos motivan los sistemas que presentan retos técnicos desde el inicio. Al detectar que el proyecto tenía problemas para arrancar, lo vimos como la oportunidad perfecta para aplicar nuestra experiencia estabilizando entornos. Nuestro objetivo es transformar este sistema inestable en una API sólida, segura y eficiente, aplicando prácticas modernas de automatización y optimización.
+
+# Delivery 1: Discovery & Reverse Engineering
 
 - **Runtime**: Node.js 22 LTS
 - **Framework**: Express 4.21
