@@ -1,126 +1,126 @@
-# COURSE PROJECT 
+# Vulnerable Node - Rehabilitated
 
-# Project Objective
-Working in pairs (engineering squads), you will assume the role of Staff Software Engineers hired to take over a "distressed" legacy application. Your mission is not merely to write code, but to stabilize, secure, and modernize the system using advanced engineering practices. You must collaborate to apply AI for reverse engineering, implement governance metrics, secure the supply chain, and optimize for cloud economics, documenting your strategic decisions along the way.
+A Node.js e-commerce application that was intentionally vulnerable, now rehabilitated to production-ready secure state.
 
+## Tech Stack
 # Why we chose this project
 Hemos elegido The Vulnerable API porque, como expertos en Infraestructura, Cloud y DevOps, nos motivan los sistemas que presentan retos técnicos desde el inicio. Al detectar que el proyecto tenía problemas para arrancar, lo vimos como la oportunidad perfecta para aplicar nuestra experiencia estabilizando entornos. Nuestro objetivo es transformar este sistema inestable en una API sólida, segura y eficiente, aplicando prácticas modernas de automatización y optimización.
 
 # Delivery 1: Discovery & Reverse Engineering
 
-Mini-Rubric:
-[☑️] Context Map accurately reflects the codebase structure.
-https://www.notion.so/Context-Map-AI-Driven-Discovery-vulnerable-node-302d301c9b7d81af8f87fccbdbb2ca65
+- **Runtime**: Node.js 22 LTS
+- **Framework**: Express 4.21
+- **Database**: PostgreSQL 16
+- **Template Engine**: EJS 3.x with ejs-mate
+- **Security**: Helmet, Argon2, CSRF protection, Zod validation
+- **Logging**: Winston structured logging
+- **Testing**: Jest + Supertest
 
-[☑️] User Stories are traceable to specific modules/files.
-https://www.notion.so/Backlog-Recovery-User-Stories-Traceability-vulnerable-node-302d301c9b7d81e89e29c48107862a4b
+## Security Features
 
-[☑️] Onboarding log clearly identifies friction points.
-https://www.notion.so/DevEx-Audit-Onboarding-Log-NextCode-302d301c9b7d814a8b23f48ea52fd5ee
+- Parameterized SQL queries (SQL injection prevention)
+- Argon2id password hashing
+- HTTP security headers (Helmet)
+- CSRF token protection on all forms
+- Input validation with Zod schemas
+- Secure session management (httpOnly, sameSite, 24h expiry)
+- Rate limiting (login: 5/15min, API: 100/15min)
+- XSS prevention (escaped EJS output)
+- Open redirect prevention
 
-Vulnerable Node
-===============
+## Quick Start
 
-![Logo](https://raw.githubusercontent.com/cr0hn/vulnerable-node/master/images/logo-small.png)
-
-*Vulnerable Node: A very vulnerable web site written in NodeJS*
-
-Codename | PsEA
--------- | ----
-Version | 1.0
-Code | https://github.com/cr0hn/vulnerable-node
-Issues | https://github.com/cr0hn/vulnerable-node/issues/
-Author | Daniel Garcia (cr0hn) - @ggdaniel
-
-# Support this project
-
-Support this project (to solve issues, new features...) by applying the Github "Sponsor" button.
-
-# What's this project?
-
-The goal of this project is to be a project with really vulnerable code in NodeJS, not simulated.
-
-## Why?
-
-Similar project, like OWASP Node Goat, are pretty and useful for learning process but not for a real researcher or studding vulnerabilities in source code, because their code is not really vulnerable but simulated.
-
-This project was created with the **purpose of have a project with identified vulnerabilities in source code with the finality of can measure the quality of security analyzers tools**.
-
-Although not its main objective, this project also can be useful for:
-
-- Pentesting training.
-- Teaching: learn how NOT programming in NodeJS.
-
-The purpose of project is to provide a real app to test the quality of security source code analyzers in white box processing.
-
-## How?
-
-This project simulates a real (and very little) shop site that has identifiable sources points of common vulnerabilities.
-
-## Installation
-
-The most simple way to run the project is using docker-compose, doing this:
-
+### With Docker (Recommended)
 ```bash
+docker-compose up --build
+```
+App available at http://localhost:3000
 
-# git clone https://github.com/cr0hn/vulnerable-node.git vulnerable-node
-# cd vulnerable-node/
-# docker-compose build && docker-compose up
-Building postgres_db
-Step 1 : FROM library/postgres
----> 247a11721cbd
-Step 2 : MAINTAINER "Daniel Garcia aka (cr0hn)" <cr0hn@cr0hn.com>
----> Using cache
----> d67c05e9e2d5
-Step 3 : ADD init.sql /docker-entrypoint-initdb.d/
-....
+### Manual Setup
+```bash
+# Install dependencies
+npm install
+
+# Copy environment config
+cp .env.example .env
+
+# Start PostgreSQL (must be running)
+# Edit .env with your DATABASE_URL
+
+# Start app
+npm start
 ```
 
-## Running
+## Default Credentials
 
-Once docker compose was finished, we can open a browser and type the URL: `127.0.0.1:3000` (or the IP where you deployed the project):
+- Username: `admin` / Password: `admin`
+- Username: `roberto` / Password: `asdfpiuw981`
 
-![Login screen](https://raw.githubusercontent.com/cr0hn/vulnerable-node/master/images/login.jpg)
+## Testing
 
-To access to website you can use displayed in landing page:
+```bash
+npm test              # Run all tests
+npm run test:unit     # Unit tests only
+npm run test:integration  # Integration tests
+npm run test:e2e      # End-to-end tests
+```
 
-- admin : admin
-- roberto : asdfpiuw981
+## API Endpoints
 
-Here some images of site:
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/login` | No | Login page |
+| POST | `/login/auth` | No | Authenticate |
+| GET | `/logout` | No | Logout |
+| GET | `/` | Yes | Product list |
+| GET | `/products/detail?id=N` | Yes | Product detail |
+| GET | `/products/search?q=term` | Yes | Search products |
+| POST | `/products/buy` | Yes | Purchase product |
+| GET | `/products/purchased` | Yes | Purchase history |
+| GET | `/health` | No | Health check |
 
-![home screen](https://raw.githubusercontent.com/cr0hn/vulnerable-node/master/images/home.jpg)
+## Project Structure
 
-![shopping](https://raw.githubusercontent.com/cr0hn/vulnerable-node/master/images/shop.jpg)
+```
+├── app.js                    # Express application
+├── bin/www                   # HTTP server entry point
+├── config.js                 # Environment configuration
+├── model/                    # Database models
+│   ├── db.js                # Shared DB connection
+│   ├── auth.js              # Authentication (argon2)
+│   ├── init_db.js           # DB initialization
+│   └── products.js          # Product queries
+├── routes/                   # Express routes
+│   ├── login.js             # Auth routes
+│   ├── login_check.js       # Auth middleware
+│   └── products.js          # Product routes
+├── src/
+│   ├── infrastructure/
+│   │   ├── security/        # PasswordHasher (argon2)
+│   │   └── logging/         # Winston logger
+│   └── interface/http/
+│       ├── middleware/       # requestId, rateLimiter
+│       ├── validators/      # Zod schemas
+│       └── routes/          # Health check
+├── views/                    # EJS templates
+├── public/                   # Static assets
+├── tests/                    # Jest tests
+├── design/                   # Architecture docs
+└── docs/                     # Fix documentation
+```
 
-![purchased products](https://raw.githubusercontent.com/cr0hn/vulnerable-node/master/images/purchased.jpg)
+## Rehabilitation History
 
-# Vulnerabilities
+This project was originally [vulnerable-node](https://github.com/cr0hn/vulnerable-node), an intentionally vulnerable application. It has been rehabilitated as part of a Software Engineering course project.
 
-## Vulnerability list:
-
-This project has the most common vulnerabilities of `OWASP Top 10 <https://www.owasp.org/index.php/Top_10_2013-Top_10>`:
-
-- A1  - Injection
-- A2  - Broken Authentication and Session Management
-- A3  - Cross-Site Scripting (XSS)
-- A4  - Insecure Direct Object References
-- A5  - Security Misconfiguration
-- A6  - Sensitive Data Exposure
-- A8  - Cross-Site Request Forgery (CSRF)
-- A10 - Unvalidated Redirects and Forwards
-
-## Vulnerability code location
-
-The exactly code location of each vulnerability is pending to write
-
-# References
-
-I took ideas and how to explode it in NodeJS using these references:
-
-- https://blog.risingstack.com/node-js-security-checklist/
-- https://github.com/substack/safe-regex
-
-# License
-
-This project is released under license BSD.
+### Vulnerabilities Fixed
+- 6 SQL injection points (parameterized queries)
+- Plaintext passwords (Argon2id hashing)
+- XSS in all templates (escaped output)
+- CSRF on all forms (token protection)
+- Insecure session (hardened configuration)
+- Open redirect (URL sanitization)
+- Missing security headers (Helmet)
+- Outdated dependencies (all updated)
+- Missing input validation (Zod schemas)
+- Missing rate limiting (express-rate-limit)

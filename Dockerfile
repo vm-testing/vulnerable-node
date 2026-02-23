@@ -1,22 +1,44 @@
-FROM node:19.4.0-bullseye-slim
+# Build stage
+FROM node:22-alpine AS builder
 
-LABEL maintainer="Daniel García (cr0hn) cr0hn@cr0hn.com"
-
-ENV STAGE "DOCKER"
-
-RUN apt-get update && apt-get install -y netcat
-
-# Build app folders
-RUN mkdir /app
 WORKDIR /app
 
-# Install depends
-COPY package.json /app/
-RUN npm install
+# Copy package files first for dependency caching
+COPY package.json package-lock.json* ./
 
-# Bundle code
-COPY . /app
+# Install dependencies
+RUN npm ci --only=production
+
+# Runtime stage
+FROM node:22-alpine
+
+# Security: run as non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodeuser -u 1001
+
+WORKDIR /app
+
+# Copy dependencies from builder
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy application code
+COPY . .
+
+# Create logs directory
+RUN mkdir -p logs && chown -R nodeuser:nodejs /app
+
+# Set environment
+ENV NODE_ENV=production
+ENV STAGE=DOCKER
+ENV PORT=3000
+
+# Switch to non-root user
+USER nodeuser
 
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget -qO- http://localhost:3000/health || exit 1
+
+CMD ["node", "./bin/www"]
