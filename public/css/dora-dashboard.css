@@ -1,0 +1,151 @@
+.dora-dashboard {
+  padding-top: 80px;
+  padding-bottom: 40px;
+}
+
+.dora-header {
+  margin-bottom: 30px;
+}
+
+.dora-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+}
+
+.dora-header .lead {
+  color: #666;
+  font-size: 14px;
+}
+
+.period-selector {
+  margin-bottom: 25px;
+}
+
+.period-selector .btn {
+  margin-right: 5px;
+}
+
+.period-selector .btn.active {
+  background-color: #337ab7;
+  color: #fff;
+  border-color: #2e6da4;
+}
+
+/* Metric Cards */
+.metric-card {
+  margin-bottom: 20px;
+}
+
+.metric-card .panel-heading {
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 10px 0;
+}
+
+.metric-detail {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.metric-description {
+  font-size: 13px;
+  color: #555;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* Rating badges */
+.rating-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rating-elite {
+  background-color: #5cb85c;
+  color: #fff;
+}
+
+.rating-high {
+  background-color: #5bc0de;
+  color: #fff;
+}
+
+.rating-medium {
+  background-color: #f0ad4e;
+  color: #fff;
+}
+
+.rating-low {
+  background-color: #d9534f;
+  color: #fff;
+}
+
+/* Chart containers */
+.chart-container {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.chart-container .panel-body {
+  padding: 20px;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 280px;
+  width: 100%;
+}
+
+/* Loading state */
+.dora-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.dora-loading .glyphicon {
+  font-size: 32px;
+  margin-bottom: 15px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Error state */
+.dora-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: #a94442;
+}
+
+.dora-error .glyphicon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+/* Timestamp footer */
+.dora-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  color: #999;
+  text-align: right;
+}

@@ -40,5 +40,6 @@ jspm_packages
 
 # Claude / MCP / GitHub config
 .claude/
-.github/
+.github/*
+!.github/workflows/
 .playwright-mcp/
