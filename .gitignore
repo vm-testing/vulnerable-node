@@ -38,7 +38,6 @@ jspm_packages
 .npm
 .node_repl_history
 
-# Claude / MCP / GitHub config
+# Claude / MCP config
 .claude/
-.github/
 .playwright-mcp/
