@@ -9,7 +9,8 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=tests/unit",
     "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=tests/integration",
-    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=tests/e2e"
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=tests/e2e",
+    "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=tests/unit --coverage --coverageReporters=lcov --coverageReporters=text-summary --forceExit"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
