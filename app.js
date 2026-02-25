@@ -11,6 +11,7 @@ import config from './config.js';
 import requestId from './src/interface/http/middleware/requestId.js';
 import { apiLimiter, loginLimiter } from './src/interface/http/middleware/rateLimiter.js';
 import health from './src/interface/http/routes/health.js';
+import dora from './src/interface/http/routes/dora.js';
 import logger from './src/infrastructure/logging/Logger.js';
 
 import init_db from './model/init_db.js';
@@ -43,7 +44,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
       fontSrc: ["'self'"],
       imgSrc: ["'self'", "data:", "https:"]
     }
@@ -80,6 +81,9 @@ app.use(apiLimiter);
 
 // Health check (no auth required)
 app.use('', health);
+
+// DORA Metrics dashboard (no auth required)
+app.use('', dora);
 
 // Routes (login must be before products to avoid redirect loop from auth middleware)
 app.use('', login);
