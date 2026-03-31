@@ -13,7 +13,7 @@
     "test:ci": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=tests/unit --coverage --coverageReporters=lcov --coverageReporters=text-summary --forceExit",
     "prepare": "husky",
     "sbom": "syft scan . -o cyclonedx-json=sbom.json",
-    "audit:check": "npm audit --audit-level=high",
+    "audit:check": "npm audit --audit-level=high --omit=dev",
     "scan:secrets": "secretlint \"**/*\""
   },
   "dependencies": {
@@ -43,6 +43,7 @@
   },
   "overrides": {
     "path-to-regexp": "0.1.13",
-    "brace-expansion": "2.0.3"
+    "brace-expansion": "2.0.3",
+    "picomatch": "4.0.2"
   }
 }

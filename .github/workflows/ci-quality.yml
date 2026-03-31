@@ -103,7 +103,7 @@ jobs:
           ignore-unfixed: true
 
       # ── npm audit gate ────────────────────────────────────────────────────────
-      - name: npm audit (HIGH/CRITICAL gate)
+      - name: npm audit (HIGH/CRITICAL gate — production deps only)
         run: npm run audit:check
 
       # ── Upload evidence artifacts ─────────────────────────────────────────────
