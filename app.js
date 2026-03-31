@@ -1,70 +1,125 @@
-var express = require('express');
-var session = require('express-session')
-var engine = require('ejs-locals');
-var path = require('path');
-var favicon = require('serve-favicon');
-var fs = require("fs");
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var log4js = require("log4js");
+import express from 'express';
+import session from 'express-session';
+import engine from 'ejs-mate';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import crypto from 'crypto';
+import config from './config.js';
+import requestId from './src/interface/http/middleware/requestId.js';
+import { apiLimiter, loginLimiter } from './src/interface/http/middleware/rateLimiter.js';
+import health from './src/interface/http/routes/health.js';
+import dora from './src/interface/http/routes/dora.js';
+import logger from './src/infrastructure/logging/Logger.js';
 
-var init_db = require('./model/init_db');
-var login = require('./routes/login');
-var products = require('./routes/products');
+import init_db from './model/init_db.js';
+import login from './routes/login.js';
+import products from './routes/products.js';
 
-var app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// config second logger
-log4js.loadAppender('file');
-//log4js.addAppender(log4js.appenders.console());
-log4js.addAppender(log4js.appenders.file('app-custom.log'), 'vnode');
+const app = express();
 
-var logger4js = log4js.getLogger('vnode');
-logger4js.setLevel('INFO');
-
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'))
-
-/*
- * Template engine
- */
+// Template engine - ejs-mate replaces ejs-locals (compatible with ejs 3.x)
 app.engine('ejs', engine);
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
-app.use(logger('combined', {stream: accessLogStream}));
-app.use(bodyParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// Request ID tracking
+app.use(requestId);
+
+// Middleware
+app.use(morgan('combined'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  secret: 'ñasddfilhpaf78h78032h780g780fg780asg780dsbovncubuyvqy',
-  cookie: {
-    secure: false,
-    maxAge: 99999999999
+
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      fontSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"]
+    }
   }
 }));
 
-/*
- * Routes config
- */
-app.use('', products);
-app.use('', login);
+// Secure session configuration
+app.use(session({
+  secret: config.session.secret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.COOKIE_SECURE === 'true',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'strict'
+  },
+  name: 'sessionId'
+}));
 
-
-// catch 404 and forward to error handler
+// CSRF protection (synchronizer token pattern, session-based — replaces deprecated csurf)
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  if (!req.session.csrfToken) {
+    req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+  }
+  req.csrfToken = () => req.session.csrfToken;
+  res.locals.csrfToken = req.session.csrfToken;
+
+  const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
+  if (!safeMethods.includes(req.method)) {
+    // Unauthenticated requests bypass CSRF — they will be redirected to /login
+    // by the route auth guard. CSRF attacks require an authenticated session.
+    if (!req.session.logged) {
+      return next();
+    }
+    const submitted = req.body?._csrf || req.headers['x-csrf-token'];
+    if (submitted !== req.session.csrfToken) {
+      const err = new Error('Invalid CSRF token');
+      err.code = 'EBADCSRFTOKEN';
+      return next(err);
+    }
+  }
+  next();
+});
+
+// Rate limiting
+app.use('/login/auth', loginLimiter);
+app.use(apiLimiter);
+
+// Health check (no auth required)
+app.use('', health);
+
+// DORA Metrics dashboard (no auth required)
+app.use('', dora);
+
+// Routes (login must be before products to avoid redirect loop from auth middleware)
+app.use('', login);
+app.use('', products);
+
+// CSRF error handler
+app.use(function(err, req, res, next) {
+  if (err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).json({ message: 'Invalid CSRF token' });
+  }
+  next(err);
+});
+
+// 404 handler
+app.use(function(req, res, next) {
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-/*
- * Debug functions and error handlers
- */
+// Development error handler
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -75,8 +130,7 @@ if (app.get('env') === 'development') {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
+// Production error handler
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
@@ -85,12 +139,8 @@ app.use(function(err, req, res, next) {
   });
 });
 
-/*
- * Create database
- */
-logger4js.info("Building database")
-// logger.info(("Building database");
-
+// Initialize database
+logger.info("Building database...");
 init_db();
 
-module.exports = app;
+export default app;
