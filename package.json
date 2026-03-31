@@ -40,5 +40,9 @@
     "jest": "^29.7.0",
     "secretlint": "^11.3.1",
     "supertest": "^7.0.0"
+  },
+  "overrides": {
+    "path-to-regexp": "0.1.13",
+    "brace-expansion": "2.0.3"
   }
 }
